@@ -62,7 +62,7 @@ docker run -d --name=tor_server_1 \
 -p 9001:9001 \
 -v ./torrc:/etc/tor/torrc \
 --restart=always \
-chriswayg/tor
+chriswayg/tor-alpine
 ```
 
 Check with ```docker logs tor_server_1```. If you see the message ```[notice] Self-testing indicates your ORPort is reachable from the outside. Excellent. Publishing server descriptor.``` at the bottom after quite a while, your server started successfully.
@@ -71,7 +71,7 @@ Check with ```docker logs tor_server_1```. If you see the message ```[notice] Se
 
 ```
 server:
-  image: chriswayg/tor
+  image: chriswayg/tor-alpine
   ports:
     - "9001:9001"
   volumes:
