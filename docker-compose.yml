@@ -1,0 +1,9 @@
+server:
+  image: chriswayg/tor
+  ports:
+    - "9001:9001"
+#    - "54444:54444"
+  volumes:
+    - ./torrc:/etc/tor/torrc
+#    - ./secret_id_key:/home/tord/.tor/keys/secret_id_key
+  restart: always
