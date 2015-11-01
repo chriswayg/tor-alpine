@@ -60,7 +60,7 @@ You can reuse the secret_id_key from a previous tor server installation by mount
 ```
 docker run -d --name=tor_server_1 \
 -p 9001:9001 \
--v ./torrc:/etc/tor/torrc \
+-v $PWD/torrc:/etc/tor/torrc \
 --restart=always \
 chriswayg/tor-alpine
 ```
