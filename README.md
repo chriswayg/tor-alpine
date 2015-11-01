@@ -1,4 +1,5 @@
 ## Tor Relay Server
+[![](https://badge.imagelayers.io/chriswayg/tor-alpine:latest.svg)](https://imagelayers.io/?images=chriswayg/tor-alpine:latest)
 
 ##### A small, efficient and secure Tor relay server Docker image based on Alpine Linux
 *This docker image will run Tor as an unprivileged regular user, as recommended by torproject.org*
