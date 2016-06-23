@@ -8,8 +8,8 @@ MAINTAINER Christian chriswayg@gmail.com
 # update TOR_VER and MD5 for new version 
 # (verify download with gpg signature & create md5)
 ENV TOR_ENV production
-ENV TOR_VER 0.2.6.10
-ENV TOR_MD5 04f919e7882d1ca80f835545af562bad
+ENV TOR_VER 0.2.7.6
+ENV TOR_MD5 cc19107b57136a68e8c563bf2d35b072
 
 ENV TOR_URL https://www.torproject.org/dist/tor-$TOR_VER.tar.gz
 ENV TOR_FILE tor.tar.gz
