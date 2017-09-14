@@ -33,8 +33,8 @@ RUN apk add -U build-base \
         && cd .. \
         && rm -rf $TOR_FILE $TOR_TEMP \
     && wget -O- https://bootstrap.pypa.io/get-pip.py | python \
-        && pip install fteproxy \
-                       obfsproxy \
+        && pip install --trusted-host fteproxy \
+                                     obfsproxy \
     && rm -rf /root/.cache/pip/* \
     && apk del build-base \
                git \
