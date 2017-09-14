@@ -4,6 +4,11 @@
 ##### A small, efficient and secure Tor relay server Docker image based on Alpine Linux
 *This docker image will run Tor as an unprivileged regular user, as recommended by torproject.org*
 
+***Note: this image is out of date and has build errors; rather use 'tor-server':***
+
+- https://hub.docker.com/r/chriswayg/tor-server/
+- https://github.com/chriswayg/tor-server
+
 The Tor network relies on volunteers to donate bandwidth. The more people who run relays, the faster the Tor network will be. If you have at least 2 megabits/s for both upload and download, please help out Tor by configuring your Tor to be a relay too.
 
 ![Tor](https://www.torproject.org/images/tor-logo.jpg "Tor logo")
