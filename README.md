@@ -1,13 +1,13 @@
 ## Tor Relay Server
-[![](https://badge.imagelayers.io/chriswayg/tor-alpine:latest.svg)](https://imagelayers.io/?images=chriswayg/tor-alpine:latest)
 
-##### A small, efficient and secure Tor relay server Docker image based on Alpine Linux
-*This docker image will run Tor as an unprivileged regular user, as recommended by torproject.org*
-
-***Note: this image is out of date and has build errors; rather use 'tor-server':***
-
+**Note: this image is out of date and has build errors; rather use the updated `tor-server`:**
 - https://hub.docker.com/r/chriswayg/tor-server/
 - https://github.com/chriswayg/tor-server
+
+### A small, efficient and secure Tor relay server Docker image based on Alpine Linux
+*This docker image will run Tor as an unprivileged regular user, as recommended by torproject.org*
+
+
 
 The Tor network relies on volunteers to donate bandwidth. The more people who run relays, the faster the Tor network will be. If you have at least 2 megabits/s for both upload and download, please help out Tor by configuring your Tor to be a relay too.
 
