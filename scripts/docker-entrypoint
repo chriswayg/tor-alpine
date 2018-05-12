@@ -41,7 +41,7 @@ if [ ! -e /tor-config-done ]; then
 fi
 
 echo -e "\n========================================================"
-# Display Tor version, os-version & torrc in log
+# Display OS version, Tor version & torrc in log
 cat /etc/os-release
 tor --version
 cat /etc/tor/torrc
