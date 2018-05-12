@@ -1,57 +1,97 @@
-#
-# Dockerfile for tor
-# 
+# Dockerfile for Tor Relay Server with obfs4proxy & meek-server
 
-FROM alpine
+FROM alpine:latest
 MAINTAINER Christian chriswayg@gmail.com
 
-# update TOR_VER and MD5 for new version 
-# (verify download with gpg signature & create md5)
-ENV TOR_ENV production
-ENV TOR_VER 0.2.6.10
-ENV TOR_MD5 04f919e7882d1ca80f835545af562bad
+# Environment setting only used during build
+ARG TOR_GPG_KEY=0x6AFEE6D49E92B601
 
-ENV TOR_URL https://www.torproject.org/dist/tor-$TOR_VER.tar.gz
-ENV TOR_FILE tor.tar.gz
-ENV TOR_TEMP tor-$TOR_VER
+# If no Nickname is set, a random string will be added to 'Tor4'
+ENV TOR_USER=tord \
+    TOR_NICKNAME=Tor4
 
-RUN apk add -U build-base \
-               gmp-dev \
-               libevent \
-               libevent-dev \
-               libgmpxx \
-               openssl \
-               openssl-dev \
-               python \
-               python-dev \
-    && wget -O $TOR_FILE $TOR_URL \
-        && echo "$TOR_MD5  $TOR_FILE" | md5sum -c \
-        && tar xzf $TOR_FILE \
-        && cd $TOR_TEMP \
-        && ./configure --prefix=/ --exec-prefix=/usr \
-        && make install \
-        && cd .. \
-        && rm -rf $TOR_FILE $TOR_TEMP \
-    && wget -O- https://bootstrap.pypa.io/get-pip.py | python \
-        && pip install --trusted-host fteproxy \
-                                     obfsproxy \
-    && rm -rf /root/.cache/pip/* \
-    && apk del build-base \
-               git \
-               gmp-dev \
-               go \
-               python-dev \
-    && rm -rf /var/cache/apk/*
 
-# create an unprivileged tor user
-RUN addgroup -g 19001 -S tord && adduser -u 19001 -G tord -S tord
+# Install prerequisites
+RUN apk --no-cache add --update \
+    go \
+    git \
+    gnupg \
+    build-base \
+    libgmpxx \
+    gmp-dev \
+    libevent \
+    libevent-dev \
+    openssl \
+    openssl-dev \
+    xz-libs \
+    xz-dev \
+    zstd \
+    zstd-dev \
+    pwgen \
+    # Install Tor from source, incl. GeoIP files (get latest release version number from Tor ReleaseNotes)
+    && TOR_VERSION=$(wget -q https://raw.githubusercontent.com/torproject/tor/master/ReleaseNotes -O - | grep -m1  "Changes in version" | sed 's/^.*[^0-9]\([0-9]*\.[0-9]*\.[0-9]*\.[0-9]*\).*$/\1/') \
+    && TOR_TARBALL_NAME="tor-${TOR_VERSION}.tar.gz" \
+    && TOR_TARBALL_LINK="https://dist.torproject.org/${TOR_TARBALL_NAME}" \
+    && wget -q $TOR_TARBALL_LINK \
+    && wget $TOR_TARBALL_LINK.asc \
+       # Reliably fetch the TOR_GPG_KEY
+       && found=''; \
+        	for server in \
+          		ha.pool.sks-keyservers.net \
+          		hkp://keyserver.ubuntu.com:80 \
+          		hkp://p80.pool.sks-keyservers.net:80 \
+              ipv4.pool.sks-keyservers.net \
+              keys.gnupg.net \
+          		pgp.mit.edu \
+        	; do \
+        		echo "Fetching GPG key $TOR_GPG_KEY from $server"; \
+        		gpg --keyserver "$server" --keyserver-options timeout=10 --recv-keys "$TOR_GPG_KEY" && found=yes && break; \
+        	done; \
+        	test -z "$found" && echo >&2 "error: failed to fetch GPG key $TOR_GPG_KEY" && exit 1; \
+       gpg --verify $TOR_TARBALL_NAME.asc \
+    && tar xf $TOR_TARBALL_NAME \
+    && cd tor-$TOR_VERSION \
+    && ./configure \
+    && make install \
+    && cd .. \
+    && rm -r tor-$TOR_VERSION \
+    && rm $TOR_TARBALL_NAME \
+    && rm $TOR_TARBALL_NAME.asc \
+    # Install obfs4proxy & meek-server
+    && export GOPATH="/tmp/go" \
+    && go get -v git.torproject.org/pluggable-transports/obfs4.git/obfs4proxy \
+    && mv -v /tmp/go/bin/obfs4proxy /usr/local/bin/ \
+    && rm -rf /tmp/go \
+    && obfs4proxy -version \
+    && go get -v git.torproject.org/pluggable-transports/meek.git/meek-server \
+    && mv -v /tmp/go/bin/meek-server /usr/local/bin/ \
+    && rm -rf /tmp/go \
+    && apk del \
+      go \
+      git \
+      gnupg \
+      build-base \
+      gmp-dev \
+      libevent-dev \
+      openssl-dev \
+      xz-dev \
+      zstd-dev
 
+# Create an unprivileged tor user
+RUN addgroup -g 19001 -S $TOR_USER && adduser -u 19001 -G $TOR_USER -S $TOR_USER
+
+# Copy Tor configuration file
 COPY ./torrc /etc/tor/torrc
-COPY ./docker-entrypoint /docker-entrypoint
 
-VOLUME /etc/tor /home/tord/.tor
+# Copy docker-entrypoint
+COPY ./scripts/ /usr/local/bin/
 
-# ORPort, DirPort, SocksPort, ObfsproxyPort
-EXPOSE 9001 9030 9050 54444
+# Persist data
+VOLUME /etc/tor /var/lib/tor
 
-ENTRYPOINT ["/docker-entrypoint"]
+# ORPort, DirPort, SocksPort, ObfsproxyPort, MeekPort
+EXPOSE 9001 9030 9050 54444 7002
+
+ENTRYPOINT ["docker-entrypoint"]
+
+CMD ["tor", "-f", "/etc/tor/torrc"]
