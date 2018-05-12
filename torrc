@@ -3,11 +3,9 @@
 
 # Run tor as a regular user (do not change this!)
 User tord
-DataDirectory /home/tord/.tor
+DataDirectory /var/lib/tor
 
-# CONFIGURE THIS BEFORE RUNNING TOR!
-
-Nickname Tor4example  # only use letters and numbers
+#Nickname Tor4example  # only use letters and numbers
 #ContactInfo tor4@example.org
 
 # Server's public IP Address

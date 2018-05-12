@@ -1,17 +1,20 @@
-  version: '2.2'
-  services:
-    relay:
-      image: chriswayg/tor-alpine
-      init: true
-      restart: always
-      network_mode: host
-      # ports not needed with network_mode host
-      ports:
-        #- "9001:9001"
-        #- "9030:9030"
-        #- "54444:54444"
-        #- "7002:7002"
-      volumes:
-        ## mount custom `torrc` and DataDirectory here
-        - ./torrc:/etc/tor/torrc
-        - ./data/:/home/tord/.tor/
+version: '2.2'
+services:
+  relay:
+    image: chriswayg/tor-alpine
+    init: true
+    restart: always
+    network_mode: host
+    # ports not needed with network_mode host
+    ports:
+      #- "9001:9001"
+      #- "9030:9030"
+      #- "54444:54444"
+      #- "7002:7002"
+    volumes:
+      ## mount custom `torrc` and DataDirectory here
+      - ./data/:/var/lib/tor/
+      - ./torrc:/etc/tor/torrc
+      ## alternatively mount previously saved identity keys here
+      #- ./tests/data/keys/secret_id_key:/var/lib/tor/keys/secret_id_key
+      #- ./tests/data/keys/ed25519_master_id_secret_key:/var/lib/tor/keys/secret_id_key
