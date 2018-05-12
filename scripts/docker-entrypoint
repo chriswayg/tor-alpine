@@ -1,0 +1,24 @@
+#!/bin/sh
+set -o errexit
+
+chmodf() { find $2 -type f -exec chmod -v $1 {} \;
+}
+chmodd() { find $2 -type d -exec chmod -v $1 {} \;
+}
+
+echo -e "\n========================================================"
+# If DataDirectory, torrc or secret_id_key is mounted here,
+# ownership needs to be changed to the debian-tor user
+chown -Rv tord:tord /home/tord/
+# fix permissions
+chmodd 700 /home/tord/
+chmodf 600 /home/tord/
+
+echo "========================================================"
+# display os-version & torrc  in log
+cat /etc/os-release
+cat /etc/tor/torrc
+echo "========================================================"
+
+# else default to run whatever the user wanted like "bash"
+exec "$@"
