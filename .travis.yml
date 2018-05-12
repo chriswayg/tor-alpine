@@ -17,8 +17,8 @@ script:
   - docker run -d --init --name=tor-server_relay_1 -p 9001:9001 -p 9030:9030  --restart=always local-tor-server
   - sleep 30
   - docker logs tor-server_relay_1
-  - docker cp tor-server_relay_1:/etc/tor/torrc.default ./
-  - cat torrc.default
+  # - docker cp tor-server_relay_1:/etc/tor/torrc.default ./
+  # - cat torrc.default
   - docker stop tor-server_relay_1
   - docker rm tor-server_relay_1
 
