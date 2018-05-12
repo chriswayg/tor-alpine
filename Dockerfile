@@ -1,4 +1,4 @@
-# Dockerfile for Tor Relay Server with obfs4proxy & meek-server
+# Dockerfile for Tor Relay Server with obfs4proxy
 
 FROM alpine:latest
 MAINTAINER Christian chriswayg@gmail.com
@@ -63,7 +63,6 @@ RUN apk --no-cache add --update \
     && go get -v git.torproject.org/pluggable-transports/obfs4.git/obfs4proxy \
     && mv -v /tmp/go/bin/obfs4proxy /usr/local/bin/ \
     && rm -rf /tmp/go \
-    && obfs4proxy -version \
     && go get -v git.torproject.org/pluggable-transports/meek.git/meek-server \
     && mv -v /tmp/go/bin/meek-server /usr/local/bin/ \
     && rm -rf /tmp/go \

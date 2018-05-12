@@ -1,17 +1,23 @@
-### /etc/tor/torrc ###
-## This configuration is used for testing within Travis
+##=================== /etc/torrc =====================##
+# see /etc/torrc/torrc.default and https://www.torproject.org/docs/tor-manual.html.en
+
+# Run Tor as a regular user (do not change this)
+User tord
+DataDirectory /var/lib/tor
 
 # Server's public IP Address (usually automatic)
 #Address 10.10.10.10
 
 # Port to advertise for incoming Tor connections.
-# common ports are 9001, 443
-ORPort 9001
+ORPort 9001                  # common ports are 9001, 443
 #ORPort [IPv6-address]:9001
 
 # Mirror directory information for others (optional, not used on bridge)
-# common ports are 9030, 80
-#DirPort 9030
+#DirPort 9030                 # common ports are 9030, 80
+
+# Run Tor only as a server (no local applications)
+SocksPort 0
+ControlSocket 0
 
 # Run as a relay only (change policy to enable exit node)
 ExitPolicy reject *:*         # no exits allowed
@@ -32,15 +38,7 @@ ServerTransportListenAddr obfs4  0.0.0.0:54444
 ExtORPort auto
 BridgeRelay 1
 
-# Run Tor only as a server (no local applications)
-SocksPort 0
-ControlSocket 0
-
-# Run Tor as a regular user (do not change this)
-User tord
-DataDirectory /var/lib/tor
-
 ## If no Nickname or ContactInfo is set, docker-entrypoint will use
-## the environment variables to add Nickname/ContactInfo here
+## the environment variables to add Nickname/ContactInfo below
 Nickname Tor4tests                 # only use letters and numbers
 ContactInfo tor4tests@example.org
