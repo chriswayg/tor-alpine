@@ -1,13 +1,11 @@
 ## Tor Relay Server
 
-**Note: this image is out of date and has build errors; rather use the updated `tor-server`:**
-- https://hub.docker.com/r/chriswayg/tor-server/
-- https://github.com/chriswayg/tor-server
-
 ### A small, efficient and secure Tor relay server Docker image based on Alpine Linux
 *This docker image will run Tor as an unprivileged regular user, as recommended by torproject.org*
 
-
+* For a similar image based on Debian use `tor-server`:*
+- https://hub.docker.com/r/chriswayg/tor-server/
+- https://github.com/chriswayg/tor-server
 
 The Tor network relies on volunteers to donate bandwidth. The more people who run relays, the faster the Tor network will be. If you have at least 2 megabits/s for both upload and download, please help out Tor by configuring your Tor to be a relay too.
 
@@ -45,7 +43,7 @@ ExitPolicy reject *:* # no exits allowed
 
 # run tor as a regular user
 User tord
-DataDirectory /home/tord/.tor
+DataDirectory /var/lib/tor
 
 # Set limits
 #RelayBandwidthRate 1024 KB  # Throttle traffic to
@@ -60,14 +58,12 @@ DataDirectory /home/tord/.tor
 
 ### Tor docker run example
 
-You can reuse the secret_id_key from a previous tor server installation by mounting it as a volume ```-v ./secret_id_key:/home/tord/.tor/keys/secret_id_key```, to continue with the same ID. 
+You can reuse the secret_id_key from a previous tor server installation by mounting it as a volume ```-v ./secret_id_key:/var/lib/tor/keys/secret_id_key```, to continue with the same ID.
 
 ```
-docker run -d --name=tor_server_1 \
--p 9001:9001 \
--v $PWD/torrc:/etc/tor/torrc \
---restart=always \
-chriswayg/tor-alpine
+docker run -d --init --name=tor-server_relay_1 \
+--net=host -v $PWD/torrc:/etc/tor/torrc \
+--restart=always chriswayg/tor-alpine
 ```
 
 Check with ```docker logs tor_server_1```. If you see the message ```[notice] Self-testing indicates your ORPort is reachable from the outside. Excellent. Publishing server descriptor.``` at the bottom after quite a while, your server started successfully.
@@ -75,27 +71,37 @@ Check with ```docker logs tor_server_1```. If you see the message ```[notice] Se
 ### Tor docker-compose.yml example
 
 ```
-server:
-  image: chriswayg/tor-alpine
-  ports:
-    - "9001:9001"
-  volumes:
-    - ./torrc:/etc/tor/torrc
-  restart: always
+version: '2.2'
+services:
+  relay:
+    image: chriswayg/tor-alpine
+    init: true
+    restart: always
+    network_mode: host
+    volumes:
+      ## mount custom `torrc` and DataDirectory here
+      - ./torrc:/etc/tor/torrc
+      - ./data/:/var/lib/tor/
 ```
 
 ##### start the Tor server
 This will start a new instance of the Tor relay server, show the current fingerprint and display the logs:
 ```
 docker-compose up -d
-docker exec tor_server_1 cat /home/tord/.tor/fingerprint
+docker exec tor_server_1 cat /var/lib/tor/fingerprint
 docker-compose logs
 ```
 
-### References
+### License:
+ - MIT
 
-- https://www.torproject.org/docs/tor-relay-debian.html.en
-- https://www.torproject.org/projects/obfsproxy-debian-instructions.html.en
-- Originally forked from: https://github.com/vimagick/dockerfiles/tree/master/tor
+### Guides
+- [Tor Relay Guide](https://trac.torproject.org/projects/tor/wiki/TorRelayGuide)
+- [Tor on Debian Installation Instructions](https://www.torproject.org/docs/debian.html.en)
+- [obfs4proxy on Debian - Guide to run an obfuscated bridge to help censored users connect to the Tor network.](https://trac.torproject.org/projects/tor/wiki/doc/PluggableTransports/obfs4proxy)
+- [obfs4 - The obfourscator - Github](https://github.com/Yawning/obfs4)
+- [How to use the “meek” pluggable transport](https://blog.torproject.org/how-use-meek-pluggable-transport)
+- [meek-server for Tor meek bridge](https://github.com/arlolra/meek/tree/master/meek-server)
+- Originally based on: https://github.com/vimagick/dockerfiles/tree/master/tor
 
 [1]: https://www.torproject.org/
