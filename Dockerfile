@@ -50,6 +50,7 @@ RUN apk --no-cache add --update \
       && ./configure \
       && make install \
       && ls -R /usr/local/
+      && cp -rv /usr/local /usr/local/
 
 FROM alpine:latest
 MAINTAINER Christian chriswayg@gmail.com
@@ -58,14 +59,21 @@ MAINTAINER Christian chriswayg@gmail.com
 ENV TOR_USER=tord \
     TOR_NICKNAME=Tor4
 
-# Install password generator
-RUN apk --no-cache add --update pwgen
+# Installing dependencies of Tor
+RUN apk --no-cache add --update \
+      libevent \
+      openssl \
+      xz-libs \
+      zstd \
+      pwgen
 
 # Copy obfs4proxy & meek-server
 COPY --from=go-build /usr/local/bin/ /usr/local/bin/
 
 # Copy Tor
 COPY --from=tor-build /usr/local/ /usr/local/
+
+RUN ls -R /usr/local/
 
 # Create an unprivileged tor user
 RUN addgroup -g 19001 -S $TOR_USER && adduser -u 19001 -G $TOR_USER -S $TOR_USER
