@@ -1,4 +1,12 @@
 # Dockerfile for Tor Relay Server with obfs4proxy
+# Multi-Stage build
+FROM golang:alpine AS go-build
+
+# Build obfs4proxy & meek-server
+RUN go get -v git.torproject.org/pluggable-transports/obfs4.git/obfs4proxy \
+    # /go/bin/obfs4proxy
+ && go get -v git.torproject.org/pluggable-transports/meek.git/meek-server \
+    # /go/bin/meek-server
 
 FROM alpine:latest
 MAINTAINER Christian chriswayg@gmail.com
@@ -10,24 +18,21 @@ ARG TOR_GPG_KEY=0x6AFEE6D49E92B601
 ENV TOR_USER=tord \
     TOR_NICKNAME=Tor4
 
-
 # Install prerequisites
 RUN apk --no-cache add --update \
-    go \
-    git \
-    gnupg \
-    build-base \
-    libgmpxx \
-    gmp-dev \
-    libevent \
-    libevent-dev \
-    openssl \
-    openssl-dev \
-    xz-libs \
-    xz-dev \
-    zstd \
-    zstd-dev \
-    pwgen \
+      gnupg \
+      build-base \
+      libgmpxx \
+      gmp-dev \
+      libevent \
+      libevent-dev \
+      openssl \
+      openssl-dev \
+      xz-libs \
+      xz-dev \
+      zstd \
+      zstd-dev \
+      pwgen \
     # Install Tor from source, incl. GeoIP files (get latest release version number from Tor ReleaseNotes)
     && TOR_VERSION=$(wget -q https://gitweb.torproject.org/tor.git/plain/ReleaseNotes -O - | grep -m1  "Changes in version" | sed 's/^.*[^0-9]\([0-9]*\.[0-9]*\.[0-9]*\.[0-9]*\).*$/\1/') \
     && TOR_TARBALL_NAME="tor-${TOR_VERSION}.tar.gz" \
@@ -57,17 +62,7 @@ RUN apk --no-cache add --update \
     && rm -r tor-$TOR_VERSION \
     && rm $TOR_TARBALL_NAME \
     && rm $TOR_TARBALL_NAME.asc \
-    # Install obfs4proxy & meek-server
-    && export GOPATH="/tmp/go" \
-    && go get -v git.torproject.org/pluggable-transports/obfs4.git/obfs4proxy \
-    && mv -v /tmp/go/bin/obfs4proxy /usr/local/bin/ \
-    && rm -rf /tmp/go \
-    && go get -v git.torproject.org/pluggable-transports/meek.git/meek-server \
-    && mv -v /tmp/go/bin/meek-server /usr/local/bin/ \
-    && rm -rf /tmp/go \
     && apk del \
-      go \
-      git \
       gnupg \
       build-base \
       gmp-dev \
@@ -75,6 +70,9 @@ RUN apk --no-cache add --update \
       openssl-dev \
       xz-dev \
       zstd-dev
+
+COPY --from=go-build /bin/obfs4proxy  /usr/local/bin/obfs4proxy
+COPY --from=go-build /bin/meek-server /usr/local/bin/meek-server
 
 # Create an unprivileged tor user
 RUN addgroup -g 19001 -S $TOR_USER && adduser -u 19001 -G $TOR_USER -S $TOR_USER
