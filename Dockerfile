@@ -14,13 +14,13 @@ ARG TOR_GPG_KEY=0x6AFEE6D49E92B601
 RUN apk --no-cache add --update \
         gnupg \
         build-base \
-        libgmpxx \
-        gmp-dev \
         libevent \
         libevent-dev \
         libressl \
         libressl-dev \
-        zlib \
+        xz-libs \
+        xz-dev
+
       # Install Tor from source, incl. GeoIP files (get latest release version number from Tor ReleaseNotes)
       && TOR_VERSION=$(wget -q https://gitweb.torproject.org/tor.git/plain/ReleaseNotes -O - | grep -m1  "Changes in version" | sed 's/^.*[^0-9]\([0-9]*\.[0-9]*\.[0-9]*\.[0-9]*\).*$/\1/') \
       && TOR_TARBALL_NAME="tor-${TOR_VERSION}.tar.gz" \
@@ -59,7 +59,7 @@ ENV TOR_USER=tord \
 RUN apk --no-cache add --update \
       libevent \
       libressl \
-      zlib \
+      xz-libs \
       pwgen
 
 # Copy obfs4proxy & meek-server
