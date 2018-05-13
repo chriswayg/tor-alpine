@@ -50,7 +50,7 @@ RUN apk --no-cache add --update \
       && ./configure \
       && make install \
       && ls -R /usr/local/ \
-      && cp -rv /usr/local /usr/local/
+      && cp -rv /usr/local /usr/
 
 FROM alpine:latest
 MAINTAINER Christian chriswayg@gmail.com
