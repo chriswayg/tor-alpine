@@ -49,8 +49,7 @@ RUN apk --no-cache add --update \
       && cd tor-$TOR_VERSION \
       && ./configure \
       && make install \
-      && ls -R /usr/local/ \
-      && cp -rv /usr/local /usr/
+      && ls -R /usr/local/
 
 FROM alpine:latest
 MAINTAINER Christian chriswayg@gmail.com
