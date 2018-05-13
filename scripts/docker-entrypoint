@@ -42,7 +42,7 @@ fi
 
 echo -e "\n========================================================"
 # Display OS version, Tor version & torrc in log
-cat /etc/os-release
+echo -e "Alpine Version: \c" && cat /etc/alpine-release
 tor --version
 obfs4proxy -version
 cat /etc/tor/torrc
