@@ -57,7 +57,6 @@ RUN apk --no-cache add --update \
     && rm -r tor-$TOR_VERSION \
     && rm $TOR_TARBALL_NAME \
     && rm $TOR_TARBALL_NAME.asc \
-    # && mv -v /usr/local/etc/tor/torrc.sample /etc/tor/torrc.default \
     # Install obfs4proxy & meek-server
     && export GOPATH="/tmp/go" \
     && go get -v git.torproject.org/pluggable-transports/obfs4.git/obfs4proxy \
