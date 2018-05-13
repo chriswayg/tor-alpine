@@ -20,6 +20,8 @@ RUN apk --no-cache add --update \
         libressl-dev \
         xz-libs \
         xz-dev \
+        zlib \
+        zlib-dev \        
       # Install Tor from source, incl. GeoIP files (get latest release version number from Tor ReleaseNotes)
       && TOR_VERSION=$(wget -q https://gitweb.torproject.org/tor.git/plain/ReleaseNotes -O - | grep -m1  "Changes in version" | sed 's/^.*[^0-9]\([0-9]*\.[0-9]*\.[0-9]*\.[0-9]*\).*$/\1/') \
       && TOR_TARBALL_NAME="tor-${TOR_VERSION}.tar.gz" \
