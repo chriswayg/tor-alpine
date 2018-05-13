@@ -59,12 +59,11 @@ MAINTAINER Christian chriswayg@gmail.com
 ENV TOR_USER=tord \
     TOR_NICKNAME=Tor4
 
-# Installing dependencies of Tor
+# Installing dependencies of Tor and pwgen
 RUN apk --no-cache add --update \
       libevent \
-      openssl \
-      xz-libs \
-      zstd \
+      libressl \
+      zlib \
       pwgen
 
 # Copy obfs4proxy & meek-server
