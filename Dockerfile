@@ -1,9 +1,10 @@
 # Dockerfile for Tor Relay Server with obfs4proxy (Multi-Stage build)
-FROM golang:stretch AS go-build
+FROM golang:alpine AS go-build
 
 # Build /go/bin/obfs4proxy & /go/bin/meek-server
 RUN go get -v git.torproject.org/pluggable-transports/obfs4.git/obfs4proxy \
- && go get -v git.torproject.org/pluggable-transports/meek.git/meek-server
+ && go get -v git.torproject.org/pluggable-transports/meek.git/meek-server \
+ && cp -rv /go/bin /usr/local/
 
 FROM alpine:latest
 MAINTAINER Christian chriswayg@gmail.com
@@ -68,8 +69,8 @@ RUN apk --no-cache add --update \
       xz-dev \
       zstd-dev
 
-COPY --from=go-build /bin/obfs4proxy  /usr/local/bin/obfs4proxy
-COPY --from=go-build /bin/meek-server /usr/local/bin/meek-server
+# Copy obfs4proxy & meek-server
+COPY --from=go-build /usr/local/bin/ /usr/local/bin/
 
 # Create an unprivileged tor user
 RUN addgroup -g 19001 -S $TOR_USER && adduser -u 19001 -G $TOR_USER -S $TOR_USER
