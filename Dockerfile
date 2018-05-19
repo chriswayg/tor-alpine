@@ -23,7 +23,7 @@ RUN apk --no-cache add --update \
         zlib \
         zlib-dev \
         zstd \
-        zstd-dev \        
+        zstd-dev \
       # Install Tor from source, incl. GeoIP files (get latest release version number from Tor ReleaseNotes)
       && TOR_VERSION=$(wget -q https://gitweb.torproject.org/tor.git/plain/ReleaseNotes -O - | grep -m1  "Changes in version" | sed 's/^.*[^0-9]\([0-9]*\.[0-9]*\.[0-9]*\.[0-9]*\).*$/\1/') \
       && TOR_TARBALL_NAME="tor-${TOR_VERSION}.tar.gz" \
@@ -50,6 +50,14 @@ RUN apk --no-cache add --update \
       && ./configure \
       && make install \
       && ls -R /usr/local/
+      # Main files created (plus docs):
+        # /usr/local/bin/tor
+        # /usr/local/bin/tor-gencert
+        # /usr/local/bin/tor-resolve
+        # /usr/local/bin/torify
+        # /usr/local/share/tor/geoip
+        # /usr/local/share/tor/geoip6
+        # /usr/local/etc/tor/torrc.sample
 
 FROM alpine:latest
 MAINTAINER Christian chriswayg@gmail.com
@@ -72,8 +80,6 @@ COPY --from=go-build /usr/local/bin/ /usr/local/bin/
 
 # Copy Tor
 COPY --from=tor-build /usr/local/ /usr/local/
-
-RUN ls -R /usr/local/
 
 # Create an unprivileged tor user
 RUN addgroup -g 19001 -S $TOR_USER && adduser -u 19001 -G $TOR_USER -S $TOR_USER
