@@ -72,6 +72,7 @@ RUN apk --no-cache add --update \
       libevent \
       libressl \
       xz-libs \
+      zstd-libs \
       zlib \
       zstd \
       pwgen
