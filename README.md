@@ -139,6 +139,11 @@ docker-compose exec -T relay cat /var/lib/tor/fingerprint
 docker-compose exec relay bash
 ```
 
+- Enter a container which is restarting with an error to inspect it
+```
+docker run -it --entrypoint=/bin/sh chriswayg/tor-alpine --login
+```
+
 ### Run Tor relay with IPv6
 
 If your host supports IPv6, please enable it! The host system or VPS (for example Vultr) needs to have IPv6 activated. From your host server try to ping any IPv6 host: `ping6 -c 5 ipv6.google.com` Then find out your external IPv6 address with this command:
@@ -189,28 +194,16 @@ You should see something like this in the log: `[notice] Opening OR listener on 
 
 ### Install Docker and Docker Compose
 
-Quick installation for most operation systems (with links how to install [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/):
+Links how to install
 
-- Install Docker
+- [Docker](https://docs.docker.com/install/)
+- [Docker Compose](https://docs.docker.com/compose/install/)
 
-```
-curl -sSL https://get.docker.com/ | CHANNEL=stable sh
-systemctl status docker
-```
-
-After the installation process is finished, you may need to enable the service and make sure it is started (e.g. CentOS 7).
+After the installation process is finished, you may need to enable the service and make sure it is started (e.g. CentOS).
 
 ```
 systemctl enable docker
 systemctl start docker
-```
-
-- Install Docker-Compose
-
-```
-curl -L https://github.com/docker/compose/releases/download/$(curl -Ls https://www.servercow.de/docker-compose/latest.php)/docker-compose-$(uname -s)-$(uname -m) > /usr/local/bin/docker-compose
-chmod -v +x /usr/local/bin/docker-compose
-docker-compose --version
 ```
 
 Please use the latest Docker engine available and do not use the engine that ships with your distro's repository.
