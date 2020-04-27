@@ -26,7 +26,7 @@ RUN apk --no-cache add --update \
         zstd-libs \
         zstd-dev \
       # Install Tor from source, incl. GeoIP files (get latest release version number from Tor ReleaseNotes)
-      && TOR_VERSION=$(wget -q https://gitweb.torproject.org/tor.git/plain/ReleaseNotes -O - | grep -m1  "Changes in version" | sed 's/^.*[^0-9]\([0-9]*\.[0-9]*\.[0-9]*\.[0-9]*\).*$/\1/') \
+      && TOR_VERSION=$(wget -q https://gitweb.torproject.org/tor.git/plain/ReleaseNotes -O - | grep -E -m1 '^Changes in version\s[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*\s' | sed 's/^.*[^0-9]\([0-9]*\.[0-9]*\.[0-9]*\.[0-9][\s]*\).*$/\1/') \
       && TOR_TARBALL_NAME="tor-${TOR_VERSION}.tar.gz" \
       && TOR_TARBALL_LINK="https://dist.torproject.org/${TOR_TARBALL_NAME}" \
       && wget -q $TOR_TARBALL_LINK \
