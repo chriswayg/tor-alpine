@@ -3,9 +3,9 @@
 [![](https://images.microbadger.com/badges/image/chriswayg/tor-alpine.svg)](https://microbadger.com/images/chriswayg/tor-alpine)
 
 #### A complete, efficient and secure Tor relay server Docker image
-*This docker image will update automatically each time the Alpine base image is updated and install the latest current stable version of Tor server. It will run Tor as an unprivileged regular user, as recommended by torproject.org.*
+*This docker image, when rebuilt, will update automatically to the latest Alpine base image and install the latest current stable version of Tor server. It will run Tor as an unprivileged regular user, as recommended by torproject.org.*
 
-It includes the latest Tor Alpine package from torproject.org which is installed and configured according the Tor project recommendations. Additionally it can be run as a hidden bridge using and obfs4proy as well as meek.
+It includes the latest Tor Alpine package from torproject.org which is installed and configured according the Tor project recommendations. Additionally it can be run as a hidden bridge using and obfs4proxy as well as meek.
 
 The Tor network relies on volunteers to donate bandwidth. The more people who run relays, the faster the Tor network will be. If you have at least 2 megabits/s for both upload and download, please help out Tor by configuring your server to be a Tor relay too.
 
